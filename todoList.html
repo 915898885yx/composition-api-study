@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="text/javascript" src="https://unpkg.com/vue@next"></script>
+</head>
+
+<body>
+    <div id="app">
+        <div>
+            <input type="text" :value="inputValue" @input="handleInputValueChange">
+            <button @click="() => addItem(inputValue)">提交</button>
+        </div>
+        <div>
+            <ul>
+                <li v-for="(item, index) in list" :key="index">{{item}}</li>
+            </ul>
+        </div>
+    </div>
+</body>
+<script>
+    // 关于list的操作
+    const listRelativeEffect = () => {
+        const { reactive } = Vue
+        const list = reactive([])
+        const addItem = (item) => {
+            console.log(item, 'item')
+            list.push(item)
+        }
+        return {
+            list,
+            addItem
+        }
+    }
+    // 关于input的操作
+    const inputRelativeEffect = () => {
+        const { ref } = Vue
+        const inputValue = ref('')
+        const handleInputValueChange = (e) => {
+            inputValue.value = e.target.value
+        }
+        return {
+            inputValue,
+            handleInputValueChange
+        }
+    }
+    const app = Vue.createApp({
+        setup () {
+            const { list, addItem} = listRelativeEffect()
+            const { inputValue, handleInputValueChange } = inputRelativeEffect()
+            return {
+                inputValue,
+                list,
+                addItem,
+                handleInputValueChange
+            }
+        }
+    })
+    app.mount('#app')
+</script>
+
+</html>

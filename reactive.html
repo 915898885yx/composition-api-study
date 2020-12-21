@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="text/javascript" src="https://unpkg.com/vue@next"></script>
+</head>
+
+<body>
+    <div id="app">
+        {{obj.name}}
+        {{obj.age}}<br>
+        <div>{{age}}</div>
+    </div>
+</body>
+<script>
+    const app = Vue.createApp({
+        setup() {
+            const { reactive, toRefs } = Vue // readyonly
+            const obj = reactive({
+                name: 'wang',
+                age: 12
+            })
+            setTimeout(() => {
+                obj.age = 20
+            }, 2000)
+            let { age } = toRefs(obj)
+            setTimeout(() => {
+                age.value = 30
+            }, 4000)
+            return {
+                obj,
+                age
+            }
+        }
+    })
+    app.mount('#app')
+    /**
+     * 当对reactive对象进行解构时，失去了响应式
+     * const obj = reactive({age: 10}) 当解构 {age} = obj时 {age: 10}这个对象时响应式的，但是解构出来的age的值，不是响应式的，所以需要toRefs这个api
+     * toRefs将proxy({age: 10}) 转换为 {age: proxy({value: 10})}
+     * 此时age的值具有了响应式
+     */
+</script>
+
+</html>

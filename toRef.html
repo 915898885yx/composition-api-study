@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="text/javascript" src="https://unpkg.com/vue@next"></script>
+</head>
+
+<body>
+    <div id="app">
+        {{age}}
+    </div>
+</body>
+<script>
+    const app = Vue.createApp({
+        setup() {
+            const { reactive, toRef } = Vue
+            const data = reactive({name: 'wang'})
+            let age = toRef(data, 'age') // 第二个参数可以为空
+            setTimeout(() => {
+                age.value = 'lee'
+            }, 2000)
+            return {
+                age
+            }
+        }
+    })
+    app.mount('#app')
+  /*
+    const data = reactive({name: 'wang'})
+    let {age} = toRefs(data)
+    当reactive对象中，不存在某个对象时，通过toRefs解构赋值出的值为undefined，并且不具备响应式，
+    使用toRef这个api，可以创建这个值，并且具备响应式
+    */
+</script>
+
+</html>
