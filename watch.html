@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="text/javascript" src="https://unpkg.com/vue@next"></script>
+</head>
+
+<body>
+    <div id="app">
+        <input type="text" v-model="name"><br>
+        <input type="text" v-model="objName.name">
+    </div>
+</body>
+<script>
+    const app = Vue.createApp({
+        setup() {
+            const { ref, watch, reactive, watchEffect } = Vue
+            let name = ref('1')
+            /*
+                watch：
+                1.惰性执行 lazy 初始化时不会执行
+                2.可以拿到原始值和新值
+                3.可以侦听多个数据的变化
+            */
+            // 当侦听的值为ref类型的值时，可以直接侦听
+            watch(name, (newVal, oldVal) => {
+                console.log(newVal, oldVal, '111')
+            })
+            //
+            const objName = reactive({
+                name: 'hehe'
+            })
+            // 当监听对象为reactive类型的值时，需要用一个箭头函数返回值的方式来监听
+            watch(() => objName.name, (newVal, oldVal) => {
+                console.log(newVal, oldVal, '222')
+            })
+            // 当需要监听多个值时，可以传入一个数组，这样通过一个侦听器侦听多个值
+            const stop1 = watch([name, () => objName.name], ([newName, newObjName], [oldName, oldObjName]) => {
+                console.log(newName, newObjName, '---', oldName, oldObjName)
+                setTimeout(() => {
+                    stop1() // 停止监听
+                }, 5000)
+            })
+            watch(name, (newVal, oldVal) => {
+                console.log(newVal, oldVal)
+            }, {
+                immediate: true // 此配置可以将watch修改为非惰性，类似watchEffect
+            })
+            /*
+                1.立即执行，没有惰性，immediate
+                2.不需要传递要侦听的内容，自动感知代码依赖，不需要传递很多参数，只需要一个回调函数
+                3.不能获取之前的值
+            */
+            // watchEffect(() => {
+            //     console.log('abc')
+            // })
+            const stop = watchEffect(() => {
+                console.log(objName.name)
+                setTimeout(() => {
+                    stop() // 停止监听
+                }, 5000)
+            })
+            return {
+                name,
+                objName
+            }
+        }
+    })
+    app.mount('#app')
+</script>
+
+</html>

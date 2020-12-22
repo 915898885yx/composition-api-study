@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="text/javascript" src="https://unpkg.com/vue@next"></script>
+</head>
+
+<body>
+    <div id="app">
+        {{comAge}}:{{comAgeH}}
+    </div>
+</body>
+<script>
+    const app = Vue.createApp({
+        setup() {
+            const { computed, ref } = Vue
+            const age = ref(0)
+            const comAge = computed(() => {
+                return age.value + 10
+            })
+            let comAgeH = computed({
+                get: () => {
+                    return age.value + 20
+                },
+                set: (param) => {
+                    console.log(param, "param")
+                    age.value - param
+                }
+            })
+            setTimeout(() => {
+                age.value += 1
+                comAgeH.value = 100
+            }, 3000)
+            return {
+                comAge,
+                comAgeH
+            }
+        }
+    })
+    app.mount('#app')
+</script>
+
+</html>
