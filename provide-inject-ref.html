@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="text/javascript" src="https://unpkg.com/vue@next"></script>
+</head>
+<body>
+    <div id="app">
+        <child></child>
+    </div>
+</body>
+<script>
+    const app = Vue.createApp({
+        setup () {
+           const { provide, ref, readonly } = Vue 
+           const name = ref('wang')
+           provide('name', readonly(name))// readonly 禁止子组件修改数据，只允许提供provide组件本身可以修改数据
+           provide('changeName', (val) => {
+               name.value = val
+           })
+        }
+    })
+    app.component('child', {
+        setup () {
+            const {inject, ref, onMounted} = Vue
+            const refName = ref(null) // 通过这种方式，获取原生的dom节点，ref的实现
+            const name = inject('name', '无')
+            const changeName = inject('changeName')
+            const change = () => {
+                changeName('ya')
+            }
+            onMounted(() => {
+                console.log(refName.value)
+            })
+            return {
+                name,
+                change,
+                refName
+            }
+        },
+        template: `
+            <div @click="change" ref="refName">{{name}}</div>
+        `
+    })
+    app.mount('#app')
+</script>
+</html>
